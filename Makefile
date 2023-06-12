@@ -19,22 +19,27 @@ SRC = $(SRCDIR)/main.c
 
 OBJ = $(SRC:$(SRCDIR)/%.c=$(OBJ_DIR)/%.o)
 
+CC = gcc
+
 CFLAGS = -Wall -Wextra -Werror -I$(INCDIR)
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) -o $(NAME) $(OBJ)
+	make all -C libft
+	$(CC) -o $(NAME) $(OBJ) libft/libft.a
 
 $(OBJ_DIR)/%.o:	$(SRCDIR)/%.c
 	mkdir -p '$(@D)'
-	$(CC) -c $(CFLAGS) -c $< -o $@
+	$(CC) -c $(CFLAGS) -c $< ./libft/libft.a -o $@
 
 clean:
 	rm -rf $(OBJ_DIR)
+	make clean -C libft
 
 fclean: clean
 	rm -f $(NAME)
+	make fclean -C libft
 
 re: fclean all
 
