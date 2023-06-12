@@ -2,6 +2,17 @@
 
 char    *get_cmd(char *cmd, char **env_p);
 
+void    argc_error(void)
+{
+    ft_putstr_fd("./pipex infile cmd cmd outfile\n", 2);
+    exit(0);
+}
+
+void    open_error(char **env_p)
+{
+    ft_free_tab(env_p);
+    exit(0);
+}
 void    do_cmd(char *cmd, char **env_p)
 {
     char    **cmd_split;
@@ -9,11 +20,13 @@ void    do_cmd(char *cmd, char **env_p)
 
     cmd_split = ft_split(cmd, ' ');
     cmd_p = get_cmd(cmd_split[0], env_p);
-    printf("cmd = %s\n", cmd_p);
     if (execve(cmd_p, cmd_split, env_p) == -1)
     {
-        ft_putstr_fd("Error", 2);
-        exit(0);
+        ft_free_tab(env_p);
+        ft_putstr_fd("pipex: command not found: ", 2);
+		ft_putendl_fd(cmd_split[0], 2);
+		ft_free_tab(cmd_split);
+		exit(0);
     }
 }
 
@@ -41,34 +54,52 @@ void    child_process(int *pipe_fd, char **argv, char **env_p)
     int fd;
 
     fd = open(argv[1], O_RDONLY, 0777);
+    if (fd == -1)
+        open_error(env_p);
     dup2(fd, 0);
-    // close(pipe_fd[1]);
-    // close(pipe_fd[0]);
-    (void)pipe_fd;
+    dup2(pipe_fd[1], 1);
+    close(pipe_fd[0]);
     do_cmd(argv[2], env_p);
 }
 
-int main(int argc, char **argv)
+void    parent_process(int *pipe_fd, char **argv, char **env_p)
+{
+    int fd;
+
+    fd = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
+    if (fd == -1)
+        open_error(env_p);
+    dup2(fd, 1);
+    dup2(pipe_fd[0], 0);
+    close(pipe_fd[1]);
+    do_cmd(argv[3], env_p);
+}
+
+int main(int argc, char **argv, char *envp[])
 {
     int     pipe_fd[2];
-    // pid_t   pid;
+    pid_t   pid;
     char    *env;
     char    **env_p;
 
-    if (argc != 3)
+    if (argc != 5)
+    {
+        argc_error();
         return (0);
+    }
+    (void)envp;
     env = getenv("PATH");
     env_p = ft_split(env, ':');
 
-    // if (pipe(pipe_fd) == -1)
-    //     return (-1);
-    // pid = fork();
-    // (void)argv;
-    // if (pid == -1)
-    //     return (1);
-    // if (!pid)
-    child_process(pipe_fd, argv, env_p);
-    // else
-    //     parent_process();
+    if (pipe(pipe_fd) == -1)
+        return (-1);
+    pid = fork();
+    (void)argv;
+    if (pid == -1)
+        return (1);
+    if (!pid)
+        child_process(pipe_fd, argv, env_p);
+    parent_process(pipe_fd, argv, env_p);
+    ft_free_tab(env_p);
     return (0);
 }
