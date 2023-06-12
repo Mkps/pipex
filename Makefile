@@ -31,7 +31,7 @@ $(NAME): $(OBJ)
 
 $(OBJ_DIR)/%.o:	$(SRCDIR)/%.c
 	mkdir -p '$(@D)'
-	$(CC) -c $(CFLAGS) -c $< ./libft/libft.a -o $@
+	$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
 	rm -rf $(OBJ_DIR)
