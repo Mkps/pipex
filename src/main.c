@@ -26,7 +26,7 @@ char    *ft_getenv(char **env, const char *str)
 void    open_error(char **env_p)
 {
     ft_free_tab(env_p);
-    exit(0);
+    exit(1);
 }
 void    do_cmd(char *cmd, char **env_p)
 {
