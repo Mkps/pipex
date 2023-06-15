@@ -89,12 +89,14 @@ void    exec_cmd(char *cmd, char **env_p)
     char    **cmd_split;
     char    *cmd_p;
     char    **sq;
+    char    sep;
 
     cmd_split = ft_split(cmd, ' ');\
-    if (cmd_split[1][0] == 39)
+    if (cmd_split[1][0] == 34 || cmd_split[1][0] == 39)
     {
+        sep = cmd_split[1][0];
         free(cmd_split[1]);
-        sq = ft_split(cmd, 39);
+        sq = ft_split(cmd, sep);
         cmd_split[1] = sq[1];
         cmd_split[2] = NULL;
     }
