@@ -112,5 +112,5 @@ int main(int argc, char **argv, char **envp)
         child_process(pipe_fd, argv, env_p);
     parent_process(pipe_fd, argv, env_p);
     ft_free_tab(env_p);
-    exit(0);
+    exit(pid);
 }
