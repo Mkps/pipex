@@ -148,7 +148,7 @@ char **get_path(char **envp)
     char *env;
 
     (void)envp;
-    env = getenv("PATH");
+    env = ft_getenv(envp, "PATH");
     if (env == NULL)
     {
         free(env);

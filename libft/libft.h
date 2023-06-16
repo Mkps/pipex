@@ -17,6 +17,8 @@
 # include <limits.h>
 # include <unistd.h>
 # include <stdint.h>
+# include <stdarg.h>
+
 
 int		ft_isalpha(int c);
 int		ft_isdigit(int c);
@@ -68,5 +70,12 @@ void	ft_lstclear(t_list **lst, void (*del)(void *));
 void	ft_lstiter(t_list *lst, void (*f)(void *));
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 char	*get_next_line(int fd);
+int		ft_hex(unsigned int input, char format);
+int		ft_char(char input);
+int		ft_str(char *input);
+int		ft_ptr(unsigned long long input);
+int		ft_number(int input);
+int		ft_unsigned(unsigned int input);
+int		ft_printf(const char *src, ...);
 
 #endif
