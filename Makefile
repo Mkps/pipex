@@ -15,13 +15,8 @@ SRCDIR = src
 INCDIR = includes
 OBJ_DIR = build
 
-SRC = $(SRCDIR)/main.c
-
-BNS = $(SRCDIR)/main_bonus.c
-
+SRC = $(SRCDIR)/main.c $(SRCDIR)/pipex_utils.c
 OBJ = $(SRC:$(SRCDIR)/%.c=$(OBJ_DIR)/%.o)
-
-OBJ_BONUS = $(BNS:$(SRCDIR)/%.c=$(OBJ_DIR)/%.o)
 
 CC = gcc
 
@@ -29,13 +24,11 @@ CFLAGS = -Wall -Wextra -Werror -I$(INCDIR)
 
 all: $(NAME)
 
+bonus: all
+
 $(NAME): $(OBJ)
 	make all -C libft
 	$(CC) -o $(NAME) $(OBJ) libft/libft.a
-
-bonus: $(OBJ_BONUS)
-	make all -C libft
-	$(CC) -o $(NAME) $(OBJ_BONUS) libft/libft.a
 
 $(OBJ_DIR)/%.o:	$(SRCDIR)/%.c
 	mkdir -p '$(@D)'

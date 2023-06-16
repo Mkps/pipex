@@ -1,6 +1,7 @@
 #include "pipex.h"
 #include <string.h>
 #include <sys/wait.h>
+#include <errno.h>
 
 char    *get_cmd(char *cmd, char **env_p);
 void    exec_cmd(char *cmd, char **env_p);
@@ -65,10 +66,10 @@ void    exec_pipe(char *cmd, char **env_p)
     int     pipe_fd[2];
 
     if(pipe(pipe_fd) == -1)
-        error_exit(33);
+        error_exit(3);
     pid = fork();
     if (pid == -1)
-        error_exit(44);
+        error_exit(4);
     if (pid == 0)
     {
         close(pipe_fd[0]);
@@ -91,25 +92,30 @@ void    exec_cmd(char *cmd, char **env_p)
     char    **sq;
     char    sep;
 
-    cmd_split = ft_split(cmd, ' ');\
-    if (cmd_split[1][0] == 34 || cmd_split[1][0] == 39)
+    cmd_split = ft_split(cmd, ' ');
+    sep = 0;
+    if (cmd_split[1])
     {
-        sep = cmd_split[1][0];
-        free(cmd_split[1]);
-        sq = ft_split(cmd, sep);
-        cmd_split[1] = sq[1];
-        cmd_split[2] = NULL;
+        if (cmd_split[1][0] == 34 || cmd_split[1][0] == 39)
+        {
+            sep = cmd_split[1][0];
+            free(cmd_split[1]);
+            sq = ft_split(cmd, sep);
+            cmd_split[1] = sq[1];
+            cmd_split[2] = NULL;
+        }
     }
-    // cmd_split[1] = split_q[1];
     cmd_p = get_cmd(cmd_split[0], env_p);
     if (execve(cmd_p, cmd_split, env_p) == -1)
     {
         ft_free_tab(env_p);
-        ft_putstr_fd("pipex: command not found: ", STDERR_FILENO);
-		ft_putendl_fd(cmd_split[0], STDERR_FILENO);
-        ft_free_tab(sq);
+        if (sep)
+            ft_free_tab(sq);
+        ft_putstr_fd("pipex: line 1: ", 2);
+		ft_putstr_fd(cmd_split[0], 2);
+        ft_putendl_fd(": command not found", 2);
 		ft_free_tab(cmd_split);
-		exit(9);
+		exit(127);
     }
     ft_free_tab(cmd_split);
 }
@@ -131,7 +137,7 @@ char    *get_cmd(char *cmd, char **env_p)
 		}
 		free(cmd_tmp);
 	}
-    return (cmd);
+    return (NULL);
 }
 
 char **get_path(char **envp)
@@ -141,6 +147,11 @@ char **get_path(char **envp)
 
     (void)envp;
     env = getenv("PATH");
+    if (env == NULL)
+    {
+        free(env);
+        env = "/usr/bin/";
+    }
     env_p = ft_split(env, ':');
     return(env_p);
 }
@@ -148,6 +159,7 @@ char **get_path(char **envp)
 int main(int argc, char **argv, char **envp)
 {
     int     pipe_fd[2];
+    int     tmp_fd;
     char    **env_p;
     int     i;
 
@@ -164,15 +176,35 @@ int main(int argc, char **argv, char **envp)
     }
     else
     {
-        pipe_fd[0] = open_fd(STDIN_FILENO, argv[1]);
         pipe_fd[1] = open_fd(STDOUT_FILENO, argv[argc - 1]);
+        tmp_fd = open_fd(STDOUT_FILENO, "tmp.txt");
+        dup2(2, tmp_fd);
+        pipe_fd[1] = open_fd(STDOUT_FILENO, argv[argc - 1]);
+        pipe_fd[0] = open_fd(STDIN_FILENO, argv[1]);
+        if (pipe_fd[0] == -1)
+        {
+            close(pipe_fd[0]);
+            pipe_fd[0] = open_fd(STDIN_FILENO, "tmp.txt");
+            dup2(tmp_fd, 0);
+        }
         dup2(pipe_fd[0], 0);
+        unlink("tmp.txt");
     }
     env_p = get_path(envp);
     while (i != argc - 2)
-        exec_pipe(argv[i++], env_p);
+    {
+        exec_pipe(argv[i], env_p);
+        i++;
+    }
     dup2(pipe_fd[1], STDOUT_FILENO);
-    exec_cmd(argv[argc - 2], env_p);
+    int pid;
+    int status;
+    pid = fork();
+    if (!pid)
+        exec_cmd(argv[argc - 2], env_p);
+    else {
+    waitpid(pid, &status, 0);
     ft_free_tab(env_p);
-    exit(0);
+    exit(WEXITSTATUS(status));
+    }
 }

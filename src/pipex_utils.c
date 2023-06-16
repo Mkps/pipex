@@ -39,13 +39,16 @@ int    open_fd(int mode, char *filename)
 
     fd = -1;
     if (mode == 0)
-        fd = open(filename, O_RDONLY, 0777);
+        fd = open(filename, O_RDONLY, 0664);
     if (mode == 1)
         fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0664);
     if (fd == -1)
     {
-        perror("pipex: error opening file");
-        exit(0);
+        ft_putstr_fd("pipex: line 1: ", 2);
+        ft_putstr_fd(filename, 2);
+        ft_putstr_fd(": ", 2);
+        perror("");
+        close(fd);
     }
     return (fd);
 }
