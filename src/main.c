@@ -1,7 +1,5 @@
 #include "pipex.h"
-#include <string.h>
-#include <sys/wait.h>
-#include <errno.h>
+
 
 char    *get_cmd(char *cmd, char **env_p);
 void    exec_cmd(char *cmd, char **env_p);
@@ -51,7 +49,7 @@ void    here_doc_handler(char *limiter)
     else
     {
         close(p_fd[1]);
-        waitpid(-1, &status, 0);
+        waitpid(pid, &status, 0);
         if(status != 256)
             printf("pipex: warning: here-doc delimited by end-of-file (wanted `%s').\n", limiter);
         dup2(p_fd[0], 0);
@@ -106,12 +104,12 @@ void    exec_cmd(char *cmd, char **env_p)
         }
     }
     cmd_p = get_cmd(cmd_split[0], env_p);
-    if (execve(cmd_p, cmd_split, env_p) == -1)
+    if (!cmd_p || execve(cmd_p, cmd_split, env_p) == -1)
     {
         ft_free_tab(env_p);
         if (sep)
             ft_free_tab(sq);
-        ft_putstr_fd("pipex: line 1: ", 2);
+        ft_putstr_fd("pipex: ", 2);
 		ft_putstr_fd(cmd_split[0], 2);
         ft_putendl_fd(": command not found", 2);
 		ft_free_tab(cmd_split);
@@ -126,6 +124,10 @@ char    *get_cmd(char *cmd, char **env_p)
     char    *cmd_dir;
     char    *cmd_tmp;
     i = -1;
+    if (access(cmd, F_OK | X_OK) == 0)
+	{
+        return (cmd);
+	}
     while (env_p[++i])
 	{
 		cmd_dir = ft_strjoin(env_p[i], "/");
@@ -150,7 +152,7 @@ char **get_path(char **envp)
     if (env == NULL)
     {
         free(env);
-        env = "/usr/bin/";
+        env = "/:/usr/bin/";
     }
     env_p = ft_split(env, ':');
     return(env_p);
@@ -177,16 +179,15 @@ int main(int argc, char **argv, char **envp)
     else
     {
         pipe_fd[1] = open_fd(STDOUT_FILENO, argv[argc - 1]);
-        tmp_fd = open_fd(STDOUT_FILENO, "tmp.txt");
-        dup2(2, tmp_fd);
-        pipe_fd[1] = open_fd(STDOUT_FILENO, argv[argc - 1]);
         pipe_fd[0] = open_fd(STDIN_FILENO, argv[1]);
         if (pipe_fd[0] == -1)
         {
-            close(pipe_fd[0]);
+            tmp_fd = open_fd(STDOUT_FILENO, "tmp.txt");
             pipe_fd[0] = open_fd(STDIN_FILENO, "tmp.txt");
             dup2(tmp_fd, 0);
         }
+        if (pipe_fd[1] == -1)
+            exit(0);
         dup2(pipe_fd[0], 0);
         unlink("tmp.txt");
     }
