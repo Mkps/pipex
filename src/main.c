@@ -8,9 +8,9 @@ void	here_doc_input(char *limiter, int *fd)
 {
 	char	*str;
 
-	close(fd[0]);	
+	close(fd[0]);
 	str = "str";
-	while(str)
+	while (str)
 	{
 		str = get_next_line(0);
 		if (str == NULL)
@@ -33,11 +33,11 @@ void	here_doc_input(char *limiter, int *fd)
 
 void	here_doc_handler(char *limiter)
 {
-	int p_fd[2];
-	pid_t   pid;
-	int status;
+	int		p_fd[2];
+	pid_t	pid;
+	int		status;
 
-	if(pipe(p_fd) == -1)
+	if (pipe(p_fd) == -1)
 		error_exit(5);
 	pid = fork();
 	if (pid == -1)
@@ -49,20 +49,20 @@ void	here_doc_handler(char *limiter)
 	{
 		close(p_fd[1]);
 		waitpid(pid, &status, 0);
-		if(status != 256)
-			printf("pipex: warning: here-doc delimited by end-of-file (wanted `%s').\n", limiter);
+		if (status != 256)
+			printf("pipex: warning: here-doc end /w EOF(wanted `%s').\n",
+				limiter);
 		dup2(p_fd[0], 0);
 		close(p_fd[0]);
 	}
 }
 
-
 void	exec_pipe(char *cmd, char **env_p)
 {
-	pid_t   pid;
-	int	 pipe_fd[2];
+	pid_t	pid;
+	int		pipe_fd[2];
 
-	if(pipe(pipe_fd) == -1)
+	if (pipe(pipe_fd) == -1)
 		error_exit(3);
 	pid = fork();
 	if (pid == -1)
@@ -77,7 +77,7 @@ void	exec_pipe(char *cmd, char **env_p)
 	else
 	{
 		close(pipe_fd[1]);
-		dup2(pipe_fd[0],STDIN_FILENO);
+		dup2(pipe_fd[0], STDIN_FILENO);
 		close(pipe_fd[0]);
 	}
 }
@@ -119,9 +119,10 @@ void	exec_cmd(char *cmd, char **env_p)
 
 char	*get_cmd(char *cmd, char **env_p)
 {
-	int i;
+	int		i;
 	char	*cmd_dir;
 	char	*cmd_tmp;
+
 	i = -1;
 	if (access(cmd, F_OK | X_OK) == 0)
 	{
@@ -141,12 +142,11 @@ char	*get_cmd(char *cmd, char **env_p)
 	return (NULL);
 }
 
-char **get_path(char **envp)
+char	**get_path(char **envp)
 {
-	char **env_p;
-	char *env;
+	char	**env_p;
+	char	*env;
 
-	(void)envp;
 	env = ft_getenv(envp, "PATH");
 	if (env == NULL)
 	{
@@ -154,15 +154,17 @@ char **get_path(char **envp)
 		env = "/:/usr/bin/";
 	}
 	env_p = ft_split(env, ':');
-	return(env_p);
+	return (env_p);
 }
 
-int main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
-	int	 pipe_fd[2];
-	int	 tmp_fd;
+	int		pipe_fd[2];
+	int		tmp_fd;
 	char	**env_p;
-	int	 i;
+	int		i;
+	int		pid;
+	int		status;
 
 	if (argc < 5)
 		argc_error(0);
@@ -197,14 +199,13 @@ int main(int argc, char **argv, char **envp)
 		i++;
 	}
 	dup2(pipe_fd[1], STDOUT_FILENO);
-	int pid;
-	int status;
 	pid = fork();
 	if (!pid)
 		exec_cmd(argv[argc - 2], env_p);
-	else {
-	waitpid(pid, &status, 0);
-	ft_free_tab(env_p);
-	exit(WEXITSTATUS(status));
+	else
+	{
+		waitpid(pid, &status, 0);
+		ft_free_tab(env_p);
+		exit(WEXITSTATUS(status));
 	}
 }
