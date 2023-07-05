@@ -140,17 +140,17 @@ char	*get_cmd(char *cmd, char **env_p)
 	}
 	return (NULL);
 }
-
-char	**get_path(char **envp)
+/** Get path from the env variable. If envv is (null) set the path to linux defaults */
+char	**get_path(char **envv)
 {
 	char	**env_p;
 	char	*env;
 
-	env = ft_getenv(envp, "PATH");
+	env = ft_getenv(envv, "PATH");
 	if (env == NULL)
 	{
 		free(env);
-		env = ".";
+		env = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin";
 	}
 	env_p = ft_split(env, ':');
 	return (env_p);
