@@ -14,6 +14,8 @@ char    *ft_getenv(char **env, const char *str);
 void    argc_error(int error_code);
 void    error_exit(int exit_code);
 int     open_fd(int mode, char *filename);
+char	*get_cmd(char *cmd, char **env_p);
+void	exec_cmd(char *cmd, char **env_p, char **envv);
 
 
 

@@ -1,7 +1,5 @@
-#include "pipex.h"
+#include "../includes/pipex.h"
 
-char	*get_cmd(char *cmd, char **env_p);
-void	exec_cmd(char *cmd, char **env_p);
 
 /** Get the input */
 void	here_doc_input(char *limiter, int *fd)
@@ -57,7 +55,7 @@ void	here_doc_handler(char *limiter)
 	}
 }
 
-void	exec_pipe(char *cmd, char **env_p)
+void	exec_pipe(char *cmd, char **env_p, char **envv)
 {
 	pid_t	pid;
 	int		pipe_fd[2];
@@ -71,7 +69,7 @@ void	exec_pipe(char *cmd, char **env_p)
 	{
 		close(pipe_fd[0]);
 		dup2(pipe_fd[1], 1);
-		exec_cmd(cmd, env_p);
+		exec_cmd(cmd, env_p, envv);
 		close(pipe_fd[1]);
 	}
 	else
@@ -82,7 +80,7 @@ void	exec_pipe(char *cmd, char **env_p)
 	}
 }
 
-void	exec_cmd(char *cmd, char **env_p)
+void	exec_cmd(char *cmd, char **env_p, char **envv)
 {
 	char	**cmd_split;
 	char	*cmd_p;
@@ -91,6 +89,7 @@ void	exec_cmd(char *cmd, char **env_p)
 
 	cmd_split = ft_split(cmd, ' ');
 	sep = 0;
+	cmd_p = get_cmd(cmd_split[0], env_p);
 	if (cmd_split[1])
 	{
 		if (cmd_split[1][0] == 34 || cmd_split[1][0] == 39)
@@ -103,7 +102,7 @@ void	exec_cmd(char *cmd, char **env_p)
 		}
 	}
 	cmd_p = get_cmd(cmd_split[0], env_p);
-	if (!cmd_p || execve(cmd_p, cmd_split, env_p) == -1)
+	if (!cmd_p || execve(cmd_p, cmd_split, envv) == -1)
 	{
 		ft_free_tab(env_p);
 		if (sep)
@@ -151,13 +150,13 @@ char	**get_path(char **envp)
 	if (env == NULL)
 	{
 		free(env);
-		env = "/:/usr/bin/";
+		env = ".";
 	}
 	env_p = ft_split(env, ':');
 	return (env_p);
 }
 
-int	main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envv)
 {
 	int		pipe_fd[2];
 	int		tmp_fd;
@@ -192,16 +191,16 @@ int	main(int argc, char **argv, char **envp)
 		dup2(pipe_fd[0], 0);
 		unlink("tmp.txt");
 	}
-	env_p = get_path(envp);
+	env_p = get_path(envv);
 	while (i != argc - 2)
 	{
-		exec_pipe(argv[i], env_p);
+		exec_pipe(argv[i], env_p, envv);
 		i++;
 	}
 	dup2(pipe_fd[1], STDOUT_FILENO);
 	pid = fork();
 	if (!pid)
-		exec_cmd(argv[argc - 2], env_p);
+		exec_cmd(argv[argc - 2], env_p, envv);
 	else
 	{
 		waitpid(pid, &status, 0);
