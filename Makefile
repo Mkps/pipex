@@ -18,7 +18,7 @@ OBJ_DIR = build
 SRC = $(SRCDIR)/main.c $(SRCDIR)/pipex_utils.c
 OBJ = $(SRC:$(SRCDIR)/%.c=$(OBJ_DIR)/%.o)
 
-CC = gcc
+CC = cc
 
 CFLAGS = -Wall -Wextra -Werror -I$(INCDIR)
 
