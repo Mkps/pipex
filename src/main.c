@@ -187,7 +187,7 @@ int	main(int argc, char **argv, char **envv)
 			dup2(tmp_fd, 0);
 		}
 		if (pipe_fd[1] == -1)
-			exit(0);
+			exit(1);
 		dup2(pipe_fd[0], 0);
 		unlink("tmp.txt");
 	}
