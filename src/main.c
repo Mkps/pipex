@@ -1,6 +1,5 @@
 #include "../includes/pipex.h"
 
-
 /** Get the input */
 void	here_doc_input(char *limiter, int *fd)
 {

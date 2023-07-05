@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/pipex.h"	
+#include "../includes/pipex.h"
 
 void	argc_error(int error_code)
 {
