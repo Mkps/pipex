@@ -15,7 +15,7 @@ SRCDIR = src
 INCDIR = includes
 OBJ_DIR = build
 
-SRC = $(SRCDIR)/main.c $(SRCDIR)/pipex_utils.c
+SRC = $(SRCDIR)/main.c $(SRCDIR)/pipex_utils.c $(SRCDIR)/here_doc.c $(SRCDIR)/pipex_cmd.c
 OBJ = $(SRC:$(SRCDIR)/%.c=$(OBJ_DIR)/%.o)
 
 CC = cc
