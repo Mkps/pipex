@@ -6,14 +6,14 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <fcntl.h>
-#include <string.h>
-#include <sys/wait.h>
-#include <errno.h>
+# include <string.h>
+# include <sys/wait.h>
+# include <errno.h>
 
-char    *ft_getenv(char **env, const char *str);
-void    argc_error(int error_code);
-void    error_exit(int exit_code);
-int     open_fd(int mode, char *filename);
+char	*ft_getenv(char **env, const char *str);
+void	argc_error(int error_code);
+void	error_exit(int exit_code);
+int		open_fd(int mode, char *filename);
 void	here_doc_handler(char *limiter);
 void	exec_pipe(char *cmd, char **envv);
 void	exec_cmd(char *cmd, char **envv);
