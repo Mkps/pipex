@@ -11,12 +11,15 @@
 # **************************************************************************** #
 
 NAME = pipex
+BONUS = pipex_bonus
 SRCDIR = src
 INCDIR = includes
 OBJ_DIR = build
 
 SRC = $(SRCDIR)/main.c $(SRCDIR)/pipex_utils.c $(SRCDIR)/here_doc.c $(SRCDIR)/pipex_cmd.c
+SRC_BONUS = $(SRCDIR)/main_bonus.c $(SRCDIR)/pipex_utils_bonus.c $(SRCDIR)/here_doc_bonus.c $(SRCDIR)/pipex_cmd_bonus.c
 OBJ = $(SRC:$(SRCDIR)/%.c=$(OBJ_DIR)/%.o)
+OBJ_BONUS = $(SRC_BONUS:$(SRCDIR)/%.c=$(OBJ_DIR)/%.o)
 
 CC = cc
 
@@ -24,11 +27,15 @@ CFLAGS = -Wall -Wextra -Werror -I$(INCDIR)
 
 all: $(NAME)
 
-bonus: all
+bonus: $(BONUS)
 
 $(NAME): $(OBJ)
 	make all -C libft
 	$(CC) -o $(NAME) $(OBJ) libft/libft.a
+	
+$(BONUS): $(OBJ_BONUS)
+	make all -C libft
+	$(CC) -o $(BONUS) $(OBJ_BONUS) libft/libft.a
 
 $(OBJ_DIR)/%.o:	$(SRCDIR)/%.c
 	mkdir -p '$(@D)'
