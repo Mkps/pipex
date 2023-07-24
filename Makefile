@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 NAME = pipex
-BONUS = pipex_bonus
+BONUS = pipex
 SRCDIR = src
 INCDIR = includes
 OBJ_DIR = build
@@ -46,7 +46,7 @@ clean:
 	make clean -C libft
 
 fclean: clean
-	rm -f $(NAME)
+	rm -f $(NAME) $(BONUS)
 	make fclean -C libft
 
 re: fclean all
