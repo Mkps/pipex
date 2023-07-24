@@ -1,4 +1,4 @@
-#include "../includes/pipex.h"
+#include "../includes/pipex_bonus.h"
 
 /** Get the input */
 void	here_doc_input(char *limiter, int *fd)

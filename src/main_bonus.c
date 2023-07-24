@@ -1,4 +1,4 @@
-#include "../includes/pipex.h"
+#include "../includes/pipex_bonus.h"
 
 // Get path from the env variable. 
 // If envv is (null) set the path to linux defaults
@@ -21,7 +21,7 @@ void	fd_heredoc(int argc, char **argv, int *i, int pipe_fd[2])
 {
 	if (!ft_strncmp(argv[1], "here_doc", ft_strlen("here_doc")))
 	{
-		i++;
+		*i = 3;
 		if (argc < 6)
 			argc_error(1);
 		pipe_fd[1] = open_fd(STDOUT_FILENO, argv[argc - 1]);
