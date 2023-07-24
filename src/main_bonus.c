@@ -74,6 +74,8 @@ int	main(int argc, char **argv, char **envv)
 		exec_cmd(argv[argc - 2], envv);
 	else
 	{
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
 		waitpid(pid, &status, 0);
 		exit(WEXITSTATUS(status));
 	}

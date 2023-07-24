@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 NAME = pipex
-BONUS = pipex
+BONUS = pipex_bonus
 SRCDIR = src
 INCDIR = includes
 OBJ_DIR = build
