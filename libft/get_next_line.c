@@ -3,14 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: alx <alx@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/07 10:48:55 by aloubier          #+#    #+#             */
-/*   Updated: 2023/04/21 21:17:50 by aloubier         ###   ########.fr       */
+/*   Updated: 2023/07/25 05:49:31 by alx              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include <stdio.h>
+#include <fcntl.h>
+#include <string.h>
 
 #ifndef BUFFER_SIZE
 # define BUFFER_SIZE 4096
@@ -119,7 +122,3 @@ char	*get_next_line(int fd)
 	buffer = ft_getleftover(buffer);
 	return (line);
 }
-
-#include <stdio.h>
-#include <fcntl.h>
-#include <string.h>

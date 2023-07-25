@@ -6,7 +6,7 @@
 /*   By: alx <alx@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/24 16:49:00 by alx               #+#    #+#             */
-/*   Updated: 2023/07/24 16:49:02 by alx              ###   ########.fr       */
+/*   Updated: 2023/07/25 05:56:09 by alx              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,28 +67,28 @@ void	fd_handler(int argc, char **argv, int *i, int pipe_fd[2])
 
 int	main(int argc, char **argv, char **envv)
 {
-	int		pipe_fd[2];
 	int		i;
-	int		pid;
+	int		end[2];
+	int		pipe_fd[2];
+	pid_t	pid[2];
 	int		status;
 
-	if (argc < 5)
+	if (argc != 5)
 		argc_error(0);
 	fd_handler(argc, argv, &i, pipe_fd);
-	while (i != argc - 2)
-	{
-		exec_pipe(argv[i], envv);
-		i++;
-	}
-	dup2(pipe_fd[1], STDOUT_FILENO);
-	pid = fork();
-	if (!pid)
-		exec_cmd(argv[argc - 2], envv);
+	pipe(end);
+	pid[0] = fork();
+	if (!pid[0])
+		first_child(end, pipe_fd, argv, envv);
 	else
 	{
+		pid[1] = fork();
+		if (!pid[1])
+			last_child(end, pipe_fd, argv, envv);
+		else
+			parent_handler(end, pid, &status);
 		close(pipe_fd[0]);
 		close(pipe_fd[1]);
-		waitpid(pid, &status, 0);
-		exit(WEXITSTATUS(status));
 	}
+	exit(WEXITSTATUS(status));
 }

@@ -6,7 +6,7 @@
 /*   By: alx <alx@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/24 16:50:07 by alx               #+#    #+#             */
-/*   Updated: 2023/07/24 16:50:08 by alx              ###   ########.fr       */
+/*   Updated: 2023/07/25 05:55:40 by alx              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,5 +31,8 @@ void	exec_pipe(char *cmd, char **envv);
 void	exec_cmd(char *cmd, char **envv);
 char	*get_cmd(char *cmd, char **env_p);
 char	**get_path(char **envv);
+void	first_child(int *end, int *pipe_fd, char **argv, char **envv);
+void	last_child(int *end, int *pipe_fd, char **argv, char **envv);
+void	parent_handler(int *end, pid_t *pid, int *status);
 
 #endif
