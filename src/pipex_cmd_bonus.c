@@ -12,49 +12,19 @@
 
 #include "../includes/pipex_bonus.h"
 
-void	exec_pipe(int **end, t_pipex *handler, char **cmd, char **envv)
+void	exec_pipe(t_pipex *p, char **cmd, char **envv)
 {
-	int	cmd_index;
-	int	count;
-				
-	cmd_index = handler->nb_cmd - handler->count;
-	handler->count -= 1;
-	count = handler->count;
-	handler->pid_array[cmd_index] = fork();
-	if (handler->pid_array[cmd_index] == -1)
-		error_exit(4);
-	if (handler->pid_array[cmd_index] == 0)
+	int	index;
+
+	index = 1;
+	first_child(p, *cmd, envv);
+	while (index < p->nb_cmd - 1)
 	{
-		if (count > 0)
-		{
-			exec_pipe(end, handler, (cmd + 1), envv);
-		}
-		if (cmd_index > 0)
-			dup2(end[cmd_index - 1][0], STDIN_FILENO);
-		if (count == 0)
-			dup2(handler->fd[1], STDOUT_FILENO);
-		else
-			dup2(end[cmd_index][1], STDOUT_FILENO);
-		if (cmd_index == 0)
-			close(end[0][0]);
-		else
-			close(end[cmd_index][0]);
-		close(end[cmd_index][1]);
-		exec_cmd(*cmd, envv);
+		middle_child(p, *(cmd + index), envv);
+		index++;
 	}
-	else
-	{
-		if (cmd_index == 0)
-			close (handler->fd[0]);
-		if (count == 0)
-			close (handler->fd[1]);
-		if (cmd_index)
-			close(end[cmd_index - 1][0]);
-		else
-			close(end[cmd_index][0]);
-		close(end[cmd_index][1]);
-		waitpid(handler->pid_array[cmd_index], &handler->status, 0);
-	}
+	last_child(p, *(cmd + index), envv);
+	parent_handler(p);
 }
 
 static char	**escape_quote(char *cmd, char ***cmd_split, char *sep)

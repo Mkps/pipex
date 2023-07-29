@@ -69,28 +69,33 @@ int	main(int argc, char **argv, char **envv)
 {
 	int		start_index;
 	int		i;
-	int		**p_arr;
 	t_pipex handler;
 	// int		pid;
 	// int		status;
 	if (argc < 5)
 		argc_error(0);
 	fd_handler(argc, argv, &start_index, handler.fd);
-	// exec_pipe(pipe_fd, argv[i], envv);
-	// dup2(pipe_fd[1], STDOUT_FILENO);
-	// pid = fork();
 	handler.nb_cmd = argc - 1 - start_index;
 	handler.count = handler.nb_cmd;
-	handler.pid_array = (pid_t *)malloc(sizeof(pid_t) * handler.nb_cmd);
-	p_arr = (int **)malloc(sizeof(int *) * handler.nb_cmd - 1);
+	handler.pid = (pid_t *)malloc(sizeof(pid_t) * handler.nb_cmd );
+	handler.p_arr = (int **)malloc(sizeof(int *) * handler.nb_cmd - 1);
 	i = 0;
 	while (i < handler.nb_cmd - 1)
 	{
-		p_arr[i] = (int *)malloc(sizeof(int) * 2);
-		pipe(p_arr[i]);
+		handler.p_arr[i] = (int *)malloc(sizeof(int) * 2);
+		if (pipe(handler.p_arr[i]) == -1)
+			printf("Error creating pipe %i\n", i);
 		i++;
 	}
 	handler.status = 0;
-	exec_pipe(p_arr, &handler, &argv[start_index], envv);
+	exec_pipe(&handler, &argv[start_index], envv);
+	i = 0;
+	while (i < handler.nb_cmd)
+	{
+		free(handler.p_arr[i]);
+		i++;
+	}
+	free(handler.p_arr);
+	free(handler.pid);
 	exit (handler.status);
 }

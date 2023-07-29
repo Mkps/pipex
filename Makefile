@@ -16,7 +16,7 @@ INCDIR = includes
 OBJ_DIR = build
 
 SRC = $(SRCDIR)/main.c $(SRCDIR)/pipex_utils.c $(SRCDIR)/here_doc.c $(SRCDIR)/pipex_cmd.c $(SRCDIR)/child.c
-SRC_BONUS = $(SRCDIR)/main_bonus.c $(SRCDIR)/pipex_utils_bonus.c $(SRCDIR)/here_doc_bonus.c $(SRCDIR)/pipex_cmd_bonus.c
+SRC_BONUS = $(SRCDIR)/main_bonus.c $(SRCDIR)/pipex_utils_bonus.c $(SRCDIR)/here_doc_bonus.c $(SRCDIR)/pipex_cmd_bonus.c $(SRCDIR)/child_bonus.c
 OBJ = $(SRC:$(SRCDIR)/%.c=$(OBJ_DIR)/%.o)
 OBJ_BONUS = $(SRC_BONUS:$(SRCDIR)/%.c=$(OBJ_DIR)/%.o)
 
@@ -26,9 +26,9 @@ CFLAGS = -Wall -Wextra -Werror -I$(INCDIR)
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
+$(NAME): $(OBJ_BONUS)
 	make all -C libft
-	$(CC) -o $(NAME) $(OBJ) libft/libft.a
+	$(CC) -o $(NAME) $(OBJ_BONUS) libft/libft.a
 	
 bonus: $(OBJ_BONUS)
 	make all -C libft
@@ -43,7 +43,7 @@ clean:
 	make clean -C libft
 
 fclean: clean
-	rm -f $(NAME) $(BONUS)
+	rm -f $(NAME)
 	make fclean -C libft
 
 re: fclean all
