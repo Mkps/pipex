@@ -26,7 +26,7 @@
 typedef struct s_pipex {
 	int	count;
 	int	fd[2];
-	int	status;
+	int	*status;
 	int	nb_cmd;
 	pid_t	*pid;
 	int	**p_arr;	

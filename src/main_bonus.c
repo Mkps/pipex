@@ -69,33 +69,40 @@ int	main(int argc, char **argv, char **envv)
 {
 	int		start_index;
 	int		i;
-	t_pipex handler;
+	t_pipex *handler;
+	int		status;
 	// int		pid;
 	// int		status;
 	if (argc < 5)
 		argc_error(0);
-	fd_handler(argc, argv, &start_index, handler.fd);
-	handler.nb_cmd = argc - 1 - start_index;
-	handler.count = handler.nb_cmd;
-	handler.pid = (pid_t *)malloc(sizeof(pid_t) * handler.nb_cmd );
-	handler.p_arr = (int **)malloc(sizeof(int *) * handler.nb_cmd - 1);
+	start_index = 0;
+	handler = (t_pipex *)malloc(sizeof(t_pipex));
+	fd_handler(argc, argv, &start_index, handler->fd);
+	handler->nb_cmd = argc - 1 - start_index;
+	handler->count = handler->nb_cmd;
+	handler->pid = (pid_t *)malloc(sizeof(pid_t) * handler->nb_cmd );
+	handler->p_arr = (int **)malloc(sizeof(int *) * handler->nb_cmd - 1);
+	handler->status = (int *)malloc(sizeof(int) * 4);
+	*handler->status = 0;
 	i = 0;
-	while (i < handler.nb_cmd - 1)
+	while (i < handler->nb_cmd - 1)
 	{
-		handler.p_arr[i] = (int *)malloc(sizeof(int) * 2);
-		if (pipe(handler.p_arr[i]) == -1)
+		handler->p_arr[i] = (int *)malloc(sizeof(int) * 2);
+		if (pipe(handler->p_arr[i]) == -1)
 			printf("Error creating pipe %i\n", i);
 		i++;
 	}
-	handler.status = 0;
-	exec_pipe(&handler, &argv[start_index], envv);
+	exec_pipe(handler, &argv[start_index], envv);
 	i = 0;
-	while (i < handler.nb_cmd)
+	while (i < handler->nb_cmd - 1)
 	{
-		free(handler.p_arr[i]);
+		free(handler->p_arr[i]);
 		i++;
 	}
-	free(handler.p_arr);
-	free(handler.pid);
-	exit (handler.status);
+	free(handler->p_arr);
+	free(handler->pid);
+	status = *handler->status;
+	free(handler->status);
+	free(handler);
+	exit (WEXITSTATUS(status));
 }

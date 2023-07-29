@@ -111,14 +111,13 @@ void	last_child(t_pipex *p, char *cmd, char **envv)
 void	parent_handler(t_pipex *p)
 {
 	int	i;
-
 	i = 0;
 	while (i < p->nb_cmd )
 	{
 		if (i != p->nb_cmd - 1)
-			waitpid(p->pid[i], &p->status, 0);
+			waitpid(p->pid[i], p->status, 0);
 		else
-			waitpid(p->pid[i], &p->status, 0);
+			waitpid(p->pid[i], p->status, 0);
 		i++;
 	}
 }
