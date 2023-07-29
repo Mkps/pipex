@@ -41,26 +41,29 @@ void	fd_heredoc(int argc, char **argv, int *i, int pipe_fd[2])
 	}
 }
 
-void	fd_handler(int argc, char **argv, int *i, int pipe_fd[2])
+void	fd_handler(int argc, char **argv, int *i, t_pipex *p)
 {
 	int	tmp_fd;
 
 	*i = 2;
 	if (!ft_strncmp(argv[1], "here_doc", ft_strlen("here_doc")))
-		fd_heredoc(argc, argv, i, pipe_fd);
+		fd_heredoc(argc, argv, i, p->fd);
 	else
 	{
-		pipe_fd[1] = open_fd(STDOUT_FILENO, argv[argc - 1]);
-		pipe_fd[0] = open_fd(STDIN_FILENO, argv[1]);
-		if (pipe_fd[0] == -1)
+		p->fd[1] = open_fd(STDOUT_FILENO, argv[argc - 1]);
+		p->fd[0] = open_fd(STDIN_FILENO, argv[1]);
+		if (p->fd[0] == -1)
 		{
 			tmp_fd = open_fd(STDOUT_FILENO, "tmp.txt");
-			pipe_fd[0] = open_fd(STDIN_FILENO, "tmp.txt");
+			p->fd[0] = open_fd(STDIN_FILENO, "tmp.txt");
 			dup2(tmp_fd, 0);
 		}
-		if (pipe_fd[1] == -1)
+		if (p->fd[1] == -1)
+		{
+			free(p);
 			exit(1);
-		dup2(pipe_fd[0], 0);
+		}
+		dup2(p->fd[0], 0);
 		unlink("tmp.txt");
 	}
 }
@@ -77,7 +80,7 @@ int	main(int argc, char **argv, char **envv)
 		argc_error(0);
 	start_index = 0;
 	handler = (t_pipex *)malloc(sizeof(t_pipex));
-	fd_handler(argc, argv, &start_index, handler->fd);
+	fd_handler(argc, argv, &start_index, handler);
 	handler->nb_cmd = argc - 1 - start_index;
 	handler->count = handler->nb_cmd;
 	handler->pid = (pid_t *)malloc(sizeof(pid_t) * handler->nb_cmd );
