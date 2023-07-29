@@ -67,28 +67,30 @@ void	fd_handler(int argc, char **argv, int *i, int pipe_fd[2])
 
 int	main(int argc, char **argv, char **envv)
 {
-	int		pipe_fd[2];
+	int		start_index;
 	int		i;
-	int		pid;
-	int		status;
-
+	int		**p_arr;
+	t_pipex handler;
+	// int		pid;
+	// int		status;
 	if (argc < 5)
 		argc_error(0);
-	fd_handler(argc, argv, &i, pipe_fd);
-	while (i != argc - 2)
+	fd_handler(argc, argv, &start_index, handler.fd);
+	// exec_pipe(pipe_fd, argv[i], envv);
+	// dup2(pipe_fd[1], STDOUT_FILENO);
+	// pid = fork();
+	handler.nb_cmd = argc - 1 - start_index;
+	handler.count = handler.nb_cmd;
+	handler.pid_array = (pid_t *)malloc(sizeof(pid_t) * handler.nb_cmd);
+	p_arr = (int **)malloc(sizeof(int *) * handler.nb_cmd - 1);
+	i = 0;
+	while (i < handler.nb_cmd - 1)
 	{
-		exec_pipe(argv[i], envv);
+		p_arr[i] = (int *)malloc(sizeof(int) * 2);
+		pipe(p_arr[i]);
 		i++;
 	}
-	dup2(pipe_fd[1], STDOUT_FILENO);
-	pid = fork();
-	if (!pid)
-		exec_cmd(argv[argc - 2], envv);
-	else
-	{
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-		waitpid(pid, &status, 0);
-		exit(WEXITSTATUS(status));
-	}
+	handler.status = 0;
+	exec_pipe(p_arr, &handler, &argv[start_index], envv);
+	exit (handler.status);
 }
