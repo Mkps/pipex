@@ -18,9 +18,7 @@ void	exec_pipe(int **end, t_pipex *handler, char **cmd, char **envv)
 	int	count;
 				
 	cmd_index = handler->nb_cmd - handler->count;
-	// printf("cmd_index %i\n", cmd_index);
 	handler->count -= 1;
-	// printf("count %i\n", handler->count);
 	count = handler->count;
 	handler->pid_array[cmd_index] = fork();
 	if (handler->pid_array[cmd_index] == -1)
