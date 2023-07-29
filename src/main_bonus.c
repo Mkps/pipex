@@ -67,28 +67,30 @@ void	fd_handler(int argc, char **argv, int *i, int pipe_fd[2])
 
 int	main(int argc, char **argv, char **envv)
 {
+	int		start_index;
 	int		i;
+	int		**p_arr;
 	t_pipex handler;
-	int		end[2];
 	// int		pid;
 	// int		status;
-	pipe(end);
 	if (argc < 5)
 		argc_error(0);
-	fd_handler(argc, argv, &i, handler.fd);
+	fd_handler(argc, argv, &start_index, handler.fd);
 	// exec_pipe(pipe_fd, argv[i], envv);
 	// dup2(pipe_fd[1], STDOUT_FILENO);
 	// pid = fork();
-	handler.nb_cmd = argc - 1 - i;
+	handler.nb_cmd = argc - 1 - start_index;
 	handler.count = handler.nb_cmd;
 	handler.pid_array = (pid_t *)malloc(sizeof(pid_t) * handler.nb_cmd);
-	handler.status = 0;
-	exec_pipe(end, &handler, &argv[i], envv);
+	p_arr = (int **)malloc(sizeof(int *) * handler.nb_cmd - 1);
 	i = 0;
-	while(i < handler.nb_cmd)
+	while (i < handler.nb_cmd - 1)
 	{
-		waitpid(handler.pid_array[i], &handler.status, 0);
+		p_arr[i] = (int *)malloc(sizeof(int) * 2);
+		pipe(p_arr[i]);
 		i++;
 	}
+	handler.status = 0;
+	exec_pipe(p_arr, &handler, &argv[start_index], envv);
 	exit (handler.status);
 }

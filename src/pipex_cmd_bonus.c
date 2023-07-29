@@ -12,12 +12,13 @@
 
 #include "../includes/pipex_bonus.h"
 
-void	exec_pipe(int *end, t_pipex *handler, char **cmd, char **envv)
+void	exec_pipe(int **end, t_pipex *handler, char **cmd, char **envv)
 {
 	int	cmd_index;
 	int	count;
 				
 	cmd_index = handler->nb_cmd - handler->count;
+	// printf("cmd_index %i\n", cmd_index);
 	handler->count -= 1;
 	// printf("count %i\n", handler->count);
 	count = handler->count;
@@ -30,20 +31,31 @@ void	exec_pipe(int *end, t_pipex *handler, char **cmd, char **envv)
 		{
 			exec_pipe(end, handler, (cmd + 1), envv);
 		}
-		close(end[0]);
+		if (cmd_index > 0)
+			dup2(end[cmd_index - 1][0], STDIN_FILENO);
 		if (count == 0)
 			dup2(handler->fd[1], STDOUT_FILENO);
 		else
-			dup2(end[1], STDOUT_FILENO);
-		close(end[1]);
+			dup2(end[cmd_index][1], STDOUT_FILENO);
+		if (cmd_index == 0)
+			close(end[0][0]);
+		else
+			close(end[cmd_index][0]);
+		close(end[cmd_index][1]);
 		exec_cmd(*cmd, envv);
 	}
 	else
 	{
-		if (count != 0)
-			dup2(end[0], STDIN_FILENO);
-		close(end[1]);
-		close(end[0]);
+		if (cmd_index == 0)
+			close (handler->fd[0]);
+		if (count == 0)
+			close (handler->fd[1]);
+		if (cmd_index)
+			close(end[cmd_index - 1][0]);
+		else
+			close(end[cmd_index][0]);
+		close(end[cmd_index][1]);
+		waitpid(handler->pid_array[cmd_index], &handler->status, 0);
 	}
 }
 

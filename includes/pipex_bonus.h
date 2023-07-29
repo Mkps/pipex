@@ -29,6 +29,7 @@ typedef struct s_pipex {
 	int	status;
 	int	nb_cmd;
 	pid_t	*pid_array;
+	int	**pipe_array;	
 } t_pipex;
 
 char	*ft_getenv(char **env, const char *str);
@@ -36,7 +37,7 @@ void	argc_error(int error_code);
 void	error_exit(int exit_code);
 int		open_fd(int mode, char *filename);
 void	here_doc_handler(char *limiter);
-void	exec_pipe(int *end, t_pipex *handler, char **cmd, char **envv);
+void	exec_pipe(int **end, t_pipex *handler, char **cmd, char **envv);
 void	exec_cmd(char *cmd, char **envv);
 char	*get_cmd(char *cmd, char **env_p);
 char	**get_path(char **envv);
