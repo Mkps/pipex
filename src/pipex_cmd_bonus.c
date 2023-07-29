@@ -12,28 +12,38 @@
 
 #include "../includes/pipex_bonus.h"
 
-void	exec_pipe(char *cmd, char **envv)
+void	exec_pipe(int *end, t_pipex *handler, char **cmd, char **envv)
 {
-	pid_t	pid;
-	int		pipe_fd[2];
-
-	if (pipe(pipe_fd) == -1)
-		error_exit(3);
-	pid = fork();
-	if (pid == -1)
+	int	cmd_index;
+	int	count;
+				
+	cmd_index = handler->nb_cmd - handler->count;
+	handler->count -= 1;
+	// printf("count %i\n", handler->count);
+	count = handler->count;
+	handler->pid_array[cmd_index] = fork();
+	if (handler->pid_array[cmd_index] == -1)
 		error_exit(4);
-	if (pid == 0)
+	if (handler->pid_array[cmd_index] == 0)
 	{
-		close(pipe_fd[0]);
-		dup2(pipe_fd[1], 1);
-		exec_cmd(cmd, envv);
-		close(pipe_fd[1]);
+		if (count > 0)
+		{
+			exec_pipe(end, handler, (cmd + 1), envv);
+		}
+		close(end[0]);
+		if (count == 0)
+			dup2(handler->fd[1], STDOUT_FILENO);
+		else
+			dup2(end[1], STDOUT_FILENO);
+		close(end[1]);
+		exec_cmd(*cmd, envv);
 	}
 	else
 	{
-		close(pipe_fd[1]);
-		dup2(pipe_fd[0], STDIN_FILENO);
-		close(pipe_fd[0]);
+		if (count != 0)
+			dup2(end[0], STDIN_FILENO);
+		close(end[1]);
+		close(end[0]);
 	}
 }
 

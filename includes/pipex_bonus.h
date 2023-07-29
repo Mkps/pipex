@@ -14,6 +14,7 @@
 # define PIPEX_BONUS_H
 
 # include "../libft/libft.h"
+#include <sys/types.h>
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
@@ -22,12 +23,20 @@
 # include <sys/wait.h>
 # include <errno.h>
 
+typedef struct s_pipex {
+	int	count;
+	int	fd[2];
+	int	status;
+	int	nb_cmd;
+	pid_t	*pid_array;
+} t_pipex;
+
 char	*ft_getenv(char **env, const char *str);
 void	argc_error(int error_code);
 void	error_exit(int exit_code);
 int		open_fd(int mode, char *filename);
 void	here_doc_handler(char *limiter);
-void	exec_pipe(char *cmd, char **envv);
+void	exec_pipe(int *end, t_pipex *handler, char **cmd, char **envv);
 void	exec_cmd(char *cmd, char **envv);
 char	*get_cmd(char *cmd, char **env_p);
 char	**get_path(char **envv);
