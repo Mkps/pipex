@@ -26,6 +26,24 @@ void	close_pipe(t_pipex *p, int cmd_index)
 		i++;
 	}
 }
+
+void	free_pipex(t_pipex *p)
+{
+	int	i;
+
+	i = 0;
+	while (i < p->nb_cmd - 1)
+	{
+		free(p->p_arr[i]);
+		i++;
+	}
+	free(p->p_arr);
+	free(p->pid);
+	free(p->status);
+	free(p);
+	exit (127);
+
+}
 void	first_child(t_pipex *p, char *cmd, char **envv)
 {
 	int	cmd_index;
@@ -46,6 +64,7 @@ void	first_child(t_pipex *p, char *cmd, char **envv)
 		close(p->fd[0]);
 		close(p->p_arr[cmd_index][1]);
 		exec_cmd(cmd, envv);
+		free_pipex(p);
 	}
 	else 
 	{
@@ -73,6 +92,7 @@ void	middle_child(t_pipex *p, char *cmd, char **envv)
 		close(p->p_arr[cmd_index - 1][0]);
 		close(p->p_arr[cmd_index][1]);
 		exec_cmd(cmd, envv);
+		free_pipex(p);
 	}
 	else
 	{
@@ -100,6 +120,7 @@ void	last_child(t_pipex *p, char *cmd, char **envv)
 		close(p->p_arr[cmd_index - 1][0]);
 		close(p->fd[1]);
 		exec_cmd(cmd, envv);
+		free_pipex(p);
 	}
 	else 
 	{

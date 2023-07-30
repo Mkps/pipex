@@ -65,14 +65,11 @@ void	exec_cmd(char *cmd, char **envv)
 		ft_free_tab(env_p);
 		if (sep)
 			ft_free_tab(sq);
-		ft_putstr_fd("pipex: ", 2);
+		ft_putstr_fd("pipex: \"", 2);
 		ft_putstr_fd(cmd_split[0], 2);
-		ft_putendl_fd(": command not found", 2);
+		ft_putendl_fd("\" command not found", 2);
 		ft_free_tab(cmd_split);
-		exit(127);
 	}
-	ft_free_tab(env_p);
-	ft_free_tab(cmd_split);
 }
 
 char	*get_cmd(char *cmd, char **env_p)
