@@ -20,7 +20,7 @@ void	exec_pipe(t_pipex *p, char **cmd, char **envv)
 	first_child(p, *cmd, envv);
 	while (index < p->nb_cmd - 1)
 	{
-		middle_child(p, *(cmd + index), envv);
+		middle_child(index, p, *(cmd + index), envv);
 		index++;
 	}
 	last_child(p, *(cmd + index), envv);
@@ -65,9 +65,12 @@ void	exec_cmd(char *cmd, char **envv)
 		ft_free_tab(env_p);
 		if (sep)
 			ft_free_tab(sq);
-		ft_putstr_fd("pipex: \"", 2);
+		ft_putstr_fd("pipex: ", 2);
+		ft_putstr_fd("\'", 2);
 		ft_putstr_fd(cmd_split[0], 2);
-		ft_putendl_fd("\" command not found", 2);
+		ft_putendl_fd("\' command not found", 2);
+		// cmd = ft_strjoin("/usr/lib/command-not-found -- ", cmd_split[0]);
+		// exec_cmd(cmd, envv);
 		ft_free_tab(cmd_split);
 	}
 }

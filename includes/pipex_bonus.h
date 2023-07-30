@@ -42,7 +42,7 @@ void	exec_cmd(char *cmd, char **envv);
 char	*get_cmd(char *cmd, char **env_p);
 char	**get_path(char **envv);
 void	last_child(t_pipex *p, char *cmd, char **envv);
-void	middle_child(t_pipex *p, char *cmd, char **envv);
+void	middle_child(int cmd_index, t_pipex *p, char *cmd, char **envv);
 void	first_child(t_pipex *p, char *cmd, char **envv);
 void	parent_handler(t_pipex *p);
 
