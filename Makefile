@@ -26,25 +26,31 @@ CFLAGS = -Wall -Wextra -Werror -I$(INCDIR)
 
 all: $(NAME)
 
-$(NAME): $(OBJ_BONUS)
-	make all -C libft
-	$(CC) -o $(NAME) $(OBJ_BONUS) libft/libft.a
+bonus: $(BONUS)
+
+$(NAME): $(OBJ)
+	@echo "Compiling objects for mandatory part"
+	@make -s all -C libft
+	$(CC) -o $(NAME) $(OBJ) libft/libft.a
 	
-bonus: $(OBJ_BONUS)
-	make all -C libft
-	$(CC) -o $(NAME) $(OBJ_BONUS) libft/libft.a
+$(BONUS): $(OBJ_BONUS)
+	@echo "Compiling objects for bonus part"
+	@make all b_make 
+	$(CC) -o $(BONUS) $(OBJ_BONUS) libft/libft.a
 
 $(OBJ_DIR)/%.o:	$(SRCDIR)/%.c
-	mkdir -p '$(@D)'
-	$(CC) -c $(CFLAGS) $< -o $@
+	@mkdir -p '$(@D)'
+	@$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
-	rm -rf $(OBJ_DIR)
-	make clean -C libft
+	@echo "Cleaning object files..."
+	@rm -rf $(OBJ_DIR)
+	@make -s clean -C libft
 
 fclean: clean
-	rm -f $(NAME)
-	make fclean -C libft
+	@echo "Cleaning binaries..."
+	@rm -f $(NAME)
+	@make -s fclean -C libft
 
 re: fclean all
 
