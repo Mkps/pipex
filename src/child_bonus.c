@@ -6,7 +6,7 @@
 /*   By: alx <alx@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/25 05:51:41 by alx               #+#    #+#             */
-/*   Updated: 2023/08/02 11:41:29 by alx              ###   ########.fr       */
+/*   Updated: 2023/08/02 11:54:13 by alx              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ void	first_child(t_pipex *p, char *cmd, char **envv)
 		close(p->fd[1]);
 		close(p->p_arr[0][1]);
 		exec_cmd(cmd, envv);
-		*p->status = 127;
 		free_pipex(p);
+		exit(127);
 	}
 	else 
 	{
@@ -74,6 +74,7 @@ void	middle_child(int cmd_index, t_pipex *p, char *cmd, char **envv)
 		close(p->p_arr[cmd_index][1]);
 		exec_cmd(cmd, envv);
 		free_pipex(p);
+		exit(127);
 	}
 	else
 	{
