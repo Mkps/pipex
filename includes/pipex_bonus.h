@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: alx <alx@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/24 16:50:00 by alx               #+#    #+#             */
-/*   Updated: 2023/08/02 10:40:37 by alx              ###   ########.fr       */
+/*   Created: 2023/08/02 14:13:46 by alx               #+#    #+#             */
+/*   Updated: 2023/08/02 14:14:40 by alx              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define PIPEX_BONUS_H
 
 # include "../libft/libft.h"
-#include <sys/types.h>
+# include <sys/types.h>
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
@@ -24,14 +24,14 @@
 # include <errno.h>
 
 typedef struct s_pipex {
-	int here_doc;
-	int	count;
-	int	fd[2];
-	int	*status;
-	int	nb_cmd;
+	int		here_doc;
+	int		count;
+	int		fd[2];
+	int		*status;
+	int		nb_cmd;
 	pid_t	*pid;
-	int	**p_arr;	
-} t_pipex;
+	int		**p_arr;	
+}	t_pipex;
 
 char	*ft_getenv(char **env, const char *str);
 void	argc_error(int error_code);
