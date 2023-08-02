@@ -6,7 +6,7 @@
 /*   By: alx <alx@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/24 16:49:23 by alx               #+#    #+#             */
-/*   Updated: 2023/07/24 16:49:26 by alx              ###   ########.fr       */
+/*   Updated: 2023/08/02 10:23:35 by alx              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	here_doc_input(char *limiter, int *fd)
 	free(str);
 }
 
-void	here_doc_handler(char *limiter)
+void	here_doc_handler(char *limiter, t_pipex *p)
 {
 	int		p_fd[2];
 	pid_t	pid;
@@ -62,6 +62,7 @@ void	here_doc_handler(char *limiter)
 			printf("pipex: warning: here-doc end /w EOF(wanted `%s').\n",
 				limiter);
 		dup2(p_fd[0], 0);
+		(void)p;
 		close(p_fd[0]);
 	}
 }
