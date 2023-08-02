@@ -6,7 +6,7 @@
 /*   By: alx <alx@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/24 16:49:13 by alx               #+#    #+#             */
-/*   Updated: 2023/08/02 11:23:06 by alx              ###   ########.fr       */
+/*   Updated: 2023/08/02 14:08:30 by alx              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	fd_handler(int argc, char **argv, int *i, t_pipex *p)
 		{
 			tmp_fd = open_fd(STDOUT_FILENO, "tmp.txt");
 			p->fd[0] = open_fd(STDIN_FILENO, "tmp.txt");
-			dup2(tmp_fd, 0);
+			close(tmp_fd);
 		}
 		if (p->fd[1] == -1)
 		{
