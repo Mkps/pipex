@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alx <alx@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/24 16:49:00 by alx               #+#    #+#             */
-/*   Updated: 2023/08/02 10:24:01 by alx              ###   ########.fr       */
+/*   Created: 2023/08/03 17:21:39 by aloubier          #+#    #+#             */
+/*   Updated: 2023/08/03 17:21:42 by aloubier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	fd_handler(int argc, char **argv, int *i, int pipe_fd[2])
 	}
 	if (pipe_fd[1] == -1)
 		exit(1);
-	dup2(pipe_fd[0], 0);
+	dup2(pipe_fd[0], STDIN_FILENO);
 	unlink("tmp.txt");
 }
 
@@ -72,8 +72,9 @@ int	main(int argc, char **argv, char **envv)
 		argc_error(0);
 	fd_handler(argc, argv, &i, pipe_fd);
 	pipe(end);
+	status = 0;
 	pid[0] = fork();
-	if (!pid[0])
+	if (pid[0] == 0)
 		first_child(end, pipe_fd, argv, envv);
 	else
 	{

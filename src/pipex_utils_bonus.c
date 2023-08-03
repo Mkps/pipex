@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_utils_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alx <alx@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/24 16:49:47 by alx               #+#    #+#             */
-/*   Updated: 2023/07/24 16:49:51 by alx              ###   ########.fr       */
+/*   Created: 2023/08/03 17:23:19 by aloubier          #+#    #+#             */
+/*   Updated: 2023/08/03 17:23:20 by aloubier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ int	open_fd(int mode, char *filename)
 		fd = open(filename, O_RDONLY, 0664);
 	if (mode == 1)
 		fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0664);
+	if (mode == 2)
+		fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0664);
 	if (fd == -1)
 	{
 		ft_putstr_fd("pipex: ", 2);

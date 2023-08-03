@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   here_doc.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alx <alx@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/24 16:49:19 by alx               #+#    #+#             */
-/*   Updated: 2023/07/24 16:49:27 by alx              ###   ########.fr       */
+/*   Created: 2023/08/03 17:21:22 by aloubier          #+#    #+#             */
+/*   Updated: 2023/08/03 17:21:26 by aloubier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	here_doc_handler(char *limiter)
 		close(p_fd[1]);
 		waitpid(pid, &status, 0);
 		if (status != 256)
-			printf("pipex: warning: here-doc end /w EOF(wanted `%s').\n",
+			ft_printf("pipex: warning: here-doc end /w EOF(wanted `%s').\n",
 				limiter);
 		dup2(p_fd[0], 0);
 		close(p_fd[0]);

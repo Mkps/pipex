@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_cmd_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alx <alx@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/24 16:49:33 by alx               #+#    #+#             */
-/*   Updated: 2023/08/02 11:06:02 by alx              ###   ########.fr       */
+/*   Created: 2023/08/03 17:44:45 by aloubier          #+#    #+#             */
+/*   Updated: 2023/08/03 17:44:47 by aloubier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,12 @@ void	exec_cmd(char *cmd, char **envv)
 		if (sep)
 			ft_free_tab(sq);
 		ft_putstr_fd("pipex: ", 2);
-		ft_putstr_fd("\'", 2);
+		if (errno == 2)
+			ft_putstr_fd("Command not found", 2);
+		else
+			ft_putstr_fd(strerror(errno), 2);
+		ft_putstr_fd(": ", 2);
 		ft_putstr_fd(cmd_split[0], 2);
-		ft_putendl_fd("\' command not found", 2);
 		ft_free_tab(cmd_split);
 	}
 }
@@ -80,16 +83,17 @@ char	*get_cmd(char *cmd, char **env_p)
 	char	*cmd_tmp;
 
 	i = -1;
-	if (access(cmd, F_OK | X_OK) == 0)
+	if (access(cmd, F_OK) == 0)
 	{
-		return (cmd);
+		if (!ft_strncmp(cmd , "./", 2))
+			return (cmd);
 	}
 	while (env_p[++i])
 	{
 		cmd_dir = ft_strjoin(env_p[i], "/");
 		cmd_tmp = ft_strjoin(cmd_dir, cmd);
 		free(cmd_dir);
-		if (access(cmd_tmp, F_OK | X_OK) == 0)
+		if (access(cmd_tmp, F_OK) == 0)
 		{
 			return (cmd_tmp);
 		}

@@ -3,34 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   here_doc_bonus.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alx <alx@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/24 16:49:23 by alx               #+#    #+#             */
-/*   Updated: 2023/08/02 10:23:35 by alx              ###   ########.fr       */
+/*   Created: 2023/08/03 17:21:08 by aloubier          #+#    #+#             */
+/*   Updated: 2023/08/03 18:36:30 by aloubier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex_bonus.h"
 
 /** Get the input */
-void	here_doc_input(char *limiter, int *fd)
+void	here_doc_input(t_pipex *p, char *limiter, int *fd)
 {
 	char	*str;
 
 	close(fd[0]);
+	close(p->fd[1]);
 	str = "str";
 	while (str)
 	{
 		str = get_next_line(0);
-		if (str == NULL)
-		{
-			close(fd[1]);
-			exit(2);
-		}
-		if (!ft_strncmp(str, limiter, ft_strlen(limiter)))
+		if (str == NULL || (!ft_strncmp(str, limiter, ft_strlen(limiter)) && (ft_strlen(limiter) == ft_strlen(str) - 1)))
 		{
 			free(str);
+			free(p);
 			close(fd[1]);
+			if (!str)
+				exit(2);
 			exit(1);
 		}
 		ft_putstr_fd(str, fd[1]);
@@ -53,13 +52,13 @@ void	here_doc_handler(char *limiter, t_pipex *p)
 		error_exit(6);
 	status = 0;
 	if (!pid)
-		here_doc_input(limiter, p_fd);
+		here_doc_input(p, limiter, p_fd);
 	else
 	{
 		close(p_fd[1]);
 		waitpid(pid, &status, 0);
 		if (status != 256)
-			printf("pipex: warning: here-doc end /w EOF(wanted `%s').\n",
+			ft_printf("pipex: warning: here-doc end /w EOF(wanted `%s').\n",
 				limiter);
 		dup2(p_fd[0], 0);
 		(void)p;

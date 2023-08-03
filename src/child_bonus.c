@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alx <alx@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/25 05:51:41 by alx               #+#    #+#             */
-/*   Updated: 2023/08/02 14:06:54 by alx              ###   ########.fr       */
+/*   Created: 2023/08/03 17:20:47 by aloubier          #+#    #+#             */
+/*   Updated: 2023/08/03 17:20:49 by aloubier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,12 @@ void	first_child(t_pipex *p, char *cmd, char **envv)
 	p->count -= 1;
 	p->pid[0] = fork();
 	if (p->pid[0] == -1)
-		printf("ERROR\n");
+		ft_putstr_fd("pipex: error creating child process\n", 2);
 	if (p->pid[0] == 0)
 	{
 		close_pipe(p, 0);
-		dup2(p->fd[0], 0);
+		if (p->here_doc == 0)
+			dup2(p->fd[0], 0);
 		dup2(p->p_arr[0][1], 1);
 		if (p->here_doc == 0)
 			close(p->fd[0]);
@@ -50,7 +51,7 @@ void	first_child(t_pipex *p, char *cmd, char **envv)
 		free_pipex(p);
 		exit(127);
 	}
-	else 
+	else
 	{
 		if (p->here_doc == 0)
 			close(p->fd[0]);
@@ -63,7 +64,7 @@ void	middle_child(int cmd_index, t_pipex *p, char *cmd, char **envv)
 	p->count -= 1;
 	p->pid[cmd_index] = fork();
 	if (p->pid[cmd_index] == -1)
-		printf("ERROR\n");
+		ft_putstr_fd("pipex: error creating child process\n", 2);
 	if (p->pid[cmd_index] == 0)
 	{
 		close_pipe(p, cmd_index);
@@ -88,7 +89,7 @@ void	last_child(int cmd_index, t_pipex *p, char *cmd, char **envv)
 	p->count -= 1;
 	p->pid[cmd_index] = fork();
 	if (p->pid[cmd_index] == -1)
-		printf("ERROR\n");
+		ft_putstr_fd("pipex: error creating child process\n", 2);
 	if (p->pid[cmd_index] == 0)
 	{
 		close_pipe(p, cmd_index);
@@ -100,7 +101,7 @@ void	last_child(int cmd_index, t_pipex *p, char *cmd, char **envv)
 		free_pipex(p);
 		exit(127);
 	}
-	else 
+	else
 	{
 		close(p->fd[1]);
 		close(p->p_arr[cmd_index - 1][0]);
