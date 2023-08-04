@@ -6,7 +6,7 @@
 /*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 17:20:47 by aloubier          #+#    #+#             */
-/*   Updated: 2023/08/04 07:41:38 by aloubier         ###   ########.fr       */
+/*   Updated: 2023/08/04 09:04:17 by aloubier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ void	close_pipe(t_pipex *p, int cmd_index)
 
 void	first_child(t_pipex *p, char *cmd, char **envv)
 {
-	p->count -= 1;
 	p->pid[0] = fork();
 	if (p->pid[0] == -1)
 		ft_putstr_fd("pipex: error creating child process\n", 2);
@@ -45,7 +44,8 @@ void	first_child(t_pipex *p, char *cmd, char **envv)
 		dup2(p->p_arr[0][1], 1);
 		if (p->here_doc == 0 && p->fd[0] != -1)
 			close(p->fd[0]);
-		close(p->fd[1]);
+		if (p->fd[1] != -1)
+			close(p->fd[1]);
 		close(p->p_arr[0][1]);
 		if (p->fd[0] != -1)
 			exec_cmd(cmd, envv);
@@ -62,7 +62,6 @@ void	first_child(t_pipex *p, char *cmd, char **envv)
 
 void	middle_child(int cmd_index, t_pipex *p, char *cmd, char **envv)
 {
-	p->count -= 1;
 	p->pid[cmd_index] = fork();
 	if (p->pid[cmd_index] == -1)
 		ft_putstr_fd("pipex: error creating child process\n", 2);
@@ -87,7 +86,6 @@ void	middle_child(int cmd_index, t_pipex *p, char *cmd, char **envv)
 
 void	last_child(int cmd_index, t_pipex *p, char *cmd, char **envv)
 {
-	p->count -= 1;
 	p->pid[cmd_index] = fork();
 	if (p->pid[cmd_index] == -1)
 		ft_putstr_fd("pipex: error creating child process\n", 2);
@@ -97,14 +95,14 @@ void	last_child(int cmd_index, t_pipex *p, char *cmd, char **envv)
 		dup2(p->p_arr[cmd_index - 1][0], 0);
 		dup2(p->fd[1], 1);
 		close(p->p_arr[cmd_index - 1][0]);
-		close(p->fd[1]);
+		if (p->fd[1] != -1)
+			close(p->fd[1]);
 		exec_cmd(cmd, envv);
 		free_pipex(p);
 		exit(127);
 	}
 	else
 	{
-		close(p->fd[1]);
 		close(p->p_arr[cmd_index - 1][0]);
 	}
 }
@@ -121,5 +119,12 @@ void	parent_handler(t_pipex *p)
 		else
 			waitpid(p->pid[i], NULL, 0);
 		i++;
+	}
+	if (p->fd[1] != -1)
+		close(p->fd[1]);
+	else
+	{
+		free_pipex(p);
+		exit(1);
 	}
 }

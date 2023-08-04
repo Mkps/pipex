@@ -6,7 +6,7 @@
 /*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 17:21:08 by aloubier          #+#    #+#             */
-/*   Updated: 2023/08/04 05:40:31 by aloubier         ###   ########.fr       */
+/*   Updated: 2023/08/04 09:04:22 by aloubier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@ void	here_doc_handler(char *limiter, t_pipex *p)
 			ft_printf("pipex: warning: here-doc end /w EOF(wanted `%s').\n",
 				limiter);
 		dup2(p_fd[0], 0);
-		(void)p;
 		close(p_fd[0]);
 	}
 }
