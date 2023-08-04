@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: alx <alx@student.42.fr>                    +#+  +:+       +#+         #
+#    By: aloubier <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/24 12:58:01 by aloubier          #+#    #+#              #
-#    Updated: 2023/08/04 04:38:37 by alx              ###   ########.fr        #
+#    Updated: 2023/08/04 07:15:42 by aloubier         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -56,4 +56,6 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re bonus
+rebonus: fclean bonus
+
+.PHONY: all clean fclean re bonus rebonus
