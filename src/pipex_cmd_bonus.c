@@ -6,7 +6,7 @@
 /*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 17:44:45 by aloubier          #+#    #+#             */
-/*   Updated: 2023/08/04 06:22:31 by aloubier         ###   ########.fr       */
+/*   Updated: 2023/08/04 07:11:44 by aloubier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,9 @@ void	exec_cmd(char *cmd, char **envv)
 		ft_free_tab(env_p);
 		if (sep)
 			ft_free_tab(sq);
-		if (cmd_p)
-			free(cmd_p);
 		ft_free_tab(cmd_split);
+		if (cmd_p != NULL)
+			free(cmd_p);
 	}
 }
 

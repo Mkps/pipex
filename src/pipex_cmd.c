@@ -6,7 +6,7 @@
 /*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 17:44:45 by aloubier          #+#    #+#             */
-/*   Updated: 2023/08/04 06:21:37 by aloubier         ###   ########.fr       */
+/*   Updated: 2023/08/04 07:07:09 by aloubier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ void	exec_cmd(char *cmd, char **envv)
 	env_p = get_path(envv);
 	cmd_split = ft_split(cmd, ' ');
 	sep = 0;
-	cmd_p = get_cmd(cmd_split[0], env_p);
 	sq = escape_quote(cmd, &cmd_split, &sep);
 	cmd_p = get_cmd(cmd_split[0], env_p);
 	if (!cmd_p || execve(cmd_p, cmd_split, envv) == -1)
@@ -78,6 +77,8 @@ void	exec_cmd(char *cmd, char **envv)
 		if (sep)
 			ft_free_tab(sq);
 		ft_free_tab(cmd_split);
+		if (cmd_p != NULL)
+			free(cmd_p);
 	}
 }
 
