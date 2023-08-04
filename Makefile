@@ -6,7 +6,7 @@
 #    By: alx <alx@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/24 12:58:01 by aloubier          #+#    #+#              #
-#    Updated: 2023/08/02 10:43:23 by alx              ###   ########.fr        #
+#    Updated: 2023/08/04 04:38:37 by alx              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,8 @@ SRCDIR = src
 INCDIR = includes
 OBJ_DIR = build
 
-SRC = $(SRCDIR)/main.c $(SRCDIR)/pipex_utils.c $(SRCDIR)/here_doc.c $(SRCDIR)/pipex_cmd.c $(SRCDIR)/child.c
+SRC = $(SRCDIR)/main.c $(SRCDIR)/pipex_utils.c $(SRCDIR)/here_doc.c \
+		$(SRCDIR)/pipex_cmd.c $(SRCDIR)/child.c $(SRCDIR)/pipex.c
 SRC_BONUS = $(SRCDIR)/main_bonus.c $(SRCDIR)/pipex_utils_bonus.c $(SRCDIR)/here_doc_bonus.c \
 			$(SRCDIR)/pipex_cmd_bonus.c $(SRCDIR)/child_bonus.c $(SRCDIR)/pipex_bonus.c
 OBJ = $(SRC:$(SRCDIR)/%.c=$(OBJ_DIR)/%.o)

@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/03 17:21:39 by aloubier          #+#    #+#             */
-/*   Updated: 2023/08/03 17:21:42 by aloubier         ###   ########.fr       */
+/*   Created: 2023/08/03 17:21:58 by aloubier          #+#    #+#             */
+/*   Updated: 2023/08/04 04:48:32 by aloubier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,62 +29,68 @@ char	**get_path(char **envv)
 	return (env_p);
 }
 
-void	fd_heredoc(int argc, char **argv, int *i, int pipe_fd[2])
+void	fd_heredoc(int argc, char **argv, int *i, t_pipex *p)
 {
 	if (!ft_strncmp(argv[1], "here_doc", ft_strlen("here_doc")))
 	{
+		p->here_doc = 1;
 		*i = 3;
 		if (argc < 6)
 			argc_error(1);
-		pipe_fd[1] = open_fd(STDOUT_FILENO, argv[argc - 1]);
-		here_doc_handler(argv[2]);
+		p->fd[1] = open_fd(2, argv[argc - 1]);
+		here_doc_handler(argv[2], p);
 	}
 }
 
-void	fd_handler(int argc, char **argv, int *i, int pipe_fd[2])
+void	fd_handler(int argc, char **argv, int *i, t_pipex *p)
 {
 	int	tmp_fd;
 
 	*i = 2;
-	pipe_fd[1] = open_fd(STDOUT_FILENO, argv[argc - 1]);
-	pipe_fd[0] = open_fd(STDIN_FILENO, argv[1]);
-	if (pipe_fd[0] == -1)
+
+	p->here_doc = 0;
+	p->fd[1] = open_fd(STDOUT_FILENO, argv[argc - 1]);
+	p->fd[0] = open_fd(STDIN_FILENO, argv[1]);
+	if (p->fd[0] == -1)
 	{
 		tmp_fd = open_fd(STDOUT_FILENO, "tmp.txt");
-		pipe_fd[0] = open_fd(STDIN_FILENO, "tmp.txt");
-		dup2(tmp_fd, 0);
+		p->fd[0] = open_fd(STDIN_FILENO, "tmp.txt");
+		close(tmp_fd);
 	}
-	if (pipe_fd[1] == -1)
+	if (p->fd[1] == -1)
+	{
+		free(p);
 		exit(1);
-	dup2(pipe_fd[0], STDIN_FILENO);
+	}
+	dup2(p->fd[0], 0);
 	unlink("tmp.txt");
 }
 
 int	main(int argc, char **argv, char **envv)
 {
+	int		start_index;
 	int		i;
-	int		end[2];
-	int		pipe_fd[2];
-	pid_t	pid[2];
+	t_pipex	*handler;
 	int		status;
 
 	if (argc != 5)
 		argc_error(0);
-	fd_handler(argc, argv, &i, pipe_fd);
-	pipe(end);
-	status = 0;
-	pid[0] = fork();
-	if (pid[0] == 0)
-		first_child(end, pipe_fd, argv, envv);
-	else
+	start_index = 0;
+	handler = (t_pipex *)malloc(sizeof(t_pipex));
+	fd_handler(argc, argv, &start_index, handler);
+	handler->nb_cmd = argc - 1 - start_index;
+	pipex_init(handler);
+	i = 0;
+	while (i < handler->nb_cmd - 1)
 	{
-		pid[1] = fork();
-		if (!pid[1])
-			last_child(end, pipe_fd, argv, envv);
-		else
-			parent_handler(end, pid, &status);
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
+		handler->p_arr[i] = (int *)malloc(sizeof(int) * 2);
+		if (pipe(handler->p_arr[i]) == -1)
+			ft_printf("Error creating pipe %i\n", i);
+		i++;
 	}
-	exit(WEXITSTATUS(status));
+	exec_pipe(handler, &argv[start_index], envv);
+	i = 0;
+	status = *handler->status;
+	free_pipex(handler);
+	exit (WEXITSTATUS(status));
 }

@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/03 17:22:59 by aloubier          #+#    #+#             */
-/*   Updated: 2023/08/03 17:23:01 by aloubier         ###   ########.fr       */
+/*   Created: 2023/08/03 17:23:19 by aloubier          #+#    #+#             */
+/*   Updated: 2023/08/04 04:55:10 by aloubier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	argc_error(int error_code)
 {
-	ft_putendl_fd("pipex: error: not enough arguments.", 2);
+	ft_putendl_fd("pipex: error: incorrect number of arguments.", 2);
 	if (error_code == 0)
 		ft_putendl_fd("Standard use is ./pipex infile cmd cmd outfile", 2);
 	if (error_code == 1)
@@ -57,6 +57,8 @@ int	open_fd(int mode, char *filename)
 		fd = open(filename, O_RDONLY, 0664);
 	if (mode == 1)
 		fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0664);
+	if (mode == 2)
+		fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0664);
 	if (fd == -1)
 	{
 		ft_putstr_fd("pipex: ", 2);

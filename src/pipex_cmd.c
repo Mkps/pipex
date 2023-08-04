@@ -5,36 +5,26 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/03 17:22:26 by aloubier          #+#    #+#             */
-/*   Updated: 2023/08/03 17:22:28 by aloubier         ###   ########.fr       */
+/*   Created: 2023/08/03 17:44:45 by aloubier          #+#    #+#             */
+/*   Updated: 2023/08/04 04:48:39 by aloubier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex.h"
 
-void	exec_pipe(char *cmd, char **envv)
+void	exec_pipe(t_pipex *p, char **cmd, char **envv)
 {
-	pid_t	pid;
-	int		pipe_fd[2];
+	int	index;
 
-	if (pipe(pipe_fd) == -1)
-		error_exit(3);
-	pid = fork();
-	if (pid == -1)
-		error_exit(4);
-	if (pid == 0)
+	index = 1;
+	first_child(p, *cmd, envv);
+	while (index < p->nb_cmd - 1)
 	{
-		close(pipe_fd[0]);
-		dup2(pipe_fd[1], 1);
-		exec_cmd(cmd, envv);
-		close(pipe_fd[1]);
+		middle_child(index, p, *(cmd + index), envv);
+		index++;
 	}
-	else
-	{
-		close(pipe_fd[1]);
-		dup2(pipe_fd[0], STDIN_FILENO);
-		close(pipe_fd[0]);
-	}
+	last_child(index, p, *(cmd + index), envv);
+	parent_handler(p);
 }
 
 static char	**escape_quote(char *cmd, char ***cmd_split, char *sep)
@@ -76,13 +66,14 @@ void	exec_cmd(char *cmd, char **envv)
 		if (sep)
 			ft_free_tab(sq);
 		ft_putstr_fd("pipex: ", 2);
+		if (errno == 2)
+			ft_putstr_fd("Command not found", 2);
+		else
+			ft_putstr_fd(strerror(errno), 2);
+		ft_putstr_fd(": ", 2);
 		ft_putstr_fd(cmd_split[0], 2);
-		ft_putendl_fd(": command not found", 2);
 		ft_free_tab(cmd_split);
-		exit(127);
 	}
-	ft_free_tab(env_p);
-	ft_free_tab(cmd_split);
 }
 
 char	*get_cmd(char *cmd, char **env_p)
@@ -92,16 +83,17 @@ char	*get_cmd(char *cmd, char **env_p)
 	char	*cmd_tmp;
 
 	i = -1;
-	if (access(cmd, F_OK | X_OK) == 0)
+	if (access(cmd, F_OK) == 0)
 	{
-		return (cmd);
+		if (!ft_strncmp(cmd , "./", 2))
+			return (cmd);
 	}
 	while (env_p[++i])
 	{
 		cmd_dir = ft_strjoin(env_p[i], "/");
 		cmd_tmp = ft_strjoin(cmd_dir, cmd);
 		free(cmd_dir);
-		if (access(cmd_tmp, F_OK | X_OK) == 0)
+		if (access(cmd_tmp, F_OK) == 0)
 		{
 			return (cmd_tmp);
 		}

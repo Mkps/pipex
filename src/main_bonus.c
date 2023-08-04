@@ -6,7 +6,7 @@
 /*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 17:21:58 by aloubier          #+#    #+#             */
-/*   Updated: 2023/08/03 17:22:01 by aloubier         ###   ########.fr       */
+/*   Updated: 2023/08/04 05:10:39 by aloubier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,13 @@ void	fd_heredoc(int argc, char **argv, int *i, t_pipex *p)
 		*i = 3;
 		if (argc < 6)
 			argc_error(1);
-		p->fd[1] = open_fd(2, argv[argc - 1]);
 		here_doc_handler(argv[2], p);
+		p->fd[1] = open_fd(2, argv[argc - 1]);
+		if (p->fd[1] == -1)
+		{
+			free(p);
+			exit(1);
+		}
 	}
 }
 

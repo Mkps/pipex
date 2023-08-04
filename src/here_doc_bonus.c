@@ -6,7 +6,7 @@
 /*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 17:21:08 by aloubier          #+#    #+#             */
-/*   Updated: 2023/08/03 18:36:30 by aloubier         ###   ########.fr       */
+/*   Updated: 2023/08/04 05:11:13 by aloubier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ void	here_doc_input(t_pipex *p, char *limiter, int *fd)
 	char	*str;
 
 	close(fd[0]);
-	close(p->fd[1]);
 	str = "str";
 	while (str)
 	{
@@ -61,7 +60,6 @@ void	here_doc_handler(char *limiter, t_pipex *p)
 			ft_printf("pipex: warning: here-doc end /w EOF(wanted `%s').\n",
 				limiter);
 		dup2(p_fd[0], 0);
-		(void)p;
 		close(p_fd[0]);
 	}
 }
