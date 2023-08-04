@@ -6,7 +6,7 @@
 /*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 17:21:58 by aloubier          #+#    #+#             */
-/*   Updated: 2023/08/04 04:48:32 by aloubier         ###   ########.fr       */
+/*   Updated: 2023/08/04 05:40:13 by aloubier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ void	fd_handler(int argc, char **argv, int *i, t_pipex *p)
 	int	tmp_fd;
 
 	*i = 2;
-
 	p->here_doc = 0;
 	p->fd[1] = open_fd(STDOUT_FILENO, argv[argc - 1]);
 	p->fd[0] = open_fd(STDIN_FILENO, argv[1]);

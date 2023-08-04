@@ -6,7 +6,7 @@
 /*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 17:21:08 by aloubier          #+#    #+#             */
-/*   Updated: 2023/08/04 05:11:13 by aloubier         ###   ########.fr       */
+/*   Updated: 2023/08/04 05:30:01 by aloubier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,10 @@ void	here_doc_input(t_pipex *p, char *limiter, int *fd)
 	str = "str";
 	while (str)
 	{
+		ft_putstr_fd(">", 1);
 		str = get_next_line(0);
-		if (str == NULL || (!ft_strncmp(str, limiter, ft_strlen(limiter)) && (ft_strlen(limiter) == ft_strlen(str) - 1)))
+		if (str == NULL || (!ft_strncmp(str, limiter, ft_strlen(limiter)) 
+				&& (ft_strlen(limiter) == ft_strlen(str) - 1)))
 		{
 			free(str);
 			free(p);

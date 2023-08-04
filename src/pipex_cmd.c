@@ -6,7 +6,7 @@
 /*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 17:44:45 by aloubier          #+#    #+#             */
-/*   Updated: 2023/08/04 04:48:39 by aloubier         ###   ########.fr       */
+/*   Updated: 2023/08/04 06:21:37 by aloubier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,17 @@ static char	**escape_quote(char *cmd, char ***cmd_split, char *sep)
 	return (sq);
 }
 
+void	cmd_error(char *cmd, int error)
+{
+	ft_putstr_fd("pipex: ", 2);
+	if (error == 2)
+		ft_putstr_fd("Command not found", 2);
+	else
+		ft_putstr_fd(strerror(error), 2);
+	ft_putstr_fd(": ", 2);
+	ft_putendl_fd(cmd, 2);
+}
+
 void	exec_cmd(char *cmd, char **envv)
 {
 	char	**cmd_split;
@@ -62,16 +73,10 @@ void	exec_cmd(char *cmd, char **envv)
 	cmd_p = get_cmd(cmd_split[0], env_p);
 	if (!cmd_p || execve(cmd_p, cmd_split, envv) == -1)
 	{
+		cmd_error(cmd_split[0], errno);
 		ft_free_tab(env_p);
 		if (sep)
 			ft_free_tab(sq);
-		ft_putstr_fd("pipex: ", 2);
-		if (errno == 2)
-			ft_putstr_fd("Command not found", 2);
-		else
-			ft_putstr_fd(strerror(errno), 2);
-		ft_putstr_fd(": ", 2);
-		ft_putstr_fd(cmd_split[0], 2);
 		ft_free_tab(cmd_split);
 	}
 }
@@ -85,7 +90,7 @@ char	*get_cmd(char *cmd, char **env_p)
 	i = -1;
 	if (access(cmd, F_OK) == 0)
 	{
-		if (!ft_strncmp(cmd , "./", 2))
+		if (!ft_strncmp(cmd, "./", 2) || !ft_strncmp(cmd, "/", 1))
 			return (cmd);
 	}
 	while (env_p[++i])
