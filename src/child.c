@@ -6,7 +6,7 @@
 /*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 17:20:47 by aloubier          #+#    #+#             */
-/*   Updated: 2023/08/04 04:49:03 by aloubier         ###   ########.fr       */
+/*   Updated: 2023/08/04 07:41:38 by aloubier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,17 +43,18 @@ void	first_child(t_pipex *p, char *cmd, char **envv)
 		if (p->here_doc == 0)
 			dup2(p->fd[0], 0);
 		dup2(p->p_arr[0][1], 1);
-		if (p->here_doc == 0)
+		if (p->here_doc == 0 && p->fd[0] != -1)
 			close(p->fd[0]);
 		close(p->fd[1]);
 		close(p->p_arr[0][1]);
-		exec_cmd(cmd, envv);
+		if (p->fd[0] != -1)
+			exec_cmd(cmd, envv);
 		free_pipex(p);
 		exit(127);
 	}
 	else
 	{
-		if (p->here_doc == 0)
+		if (p->here_doc == 0 && p->fd[0] != -1)
 			close(p->fd[0]);
 		close(p->p_arr[0][1]);
 	}

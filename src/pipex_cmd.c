@@ -6,7 +6,7 @@
 /*   By: aloubier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 17:44:45 by aloubier          #+#    #+#             */
-/*   Updated: 2023/08/04 07:07:09 by aloubier         ###   ########.fr       */
+/*   Updated: 2023/08/04 07:56:18 by aloubier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ char	*get_cmd(char *cmd, char **env_p)
 	if (access(cmd, F_OK) == 0)
 	{
 		if (!ft_strncmp(cmd, "./", 2) || !ft_strncmp(cmd, "/", 1))
-			return (cmd);
+			return (ft_strdup(cmd));
 	}
 	while (env_p[++i])
 	{
